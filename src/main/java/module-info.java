@@ -1,5 +1,4 @@
 module main {
-    requires kotlin.stdlib;
     requires kotlin.logging.jvm;
     requires javafx.controls;
     requires javafx.graphics;
