@@ -7,7 +7,6 @@ import info.hildegynoid.cue.converter.entity.CueTrackInfo
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
-import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.Reader
@@ -40,18 +39,15 @@ class CueLoader {
     }
 
     fun load(): CueSheet {
-        try {
-            BufferedReader(reader).use { bufferedReader ->
-                do {
-                    val line: String = bufferedReader.readLine() ?: break
-                    if (line.trim().isEmpty()) {
-                        continue
-                    }
-                    val command: Command = parseCommand(line) ?: continue
-                    processCommand(command)
-                } while (true)
-            }
-        } catch (ex: IOException) {
+        BufferedReader(reader).use { bufferedReader ->
+            do {
+                val line: String = bufferedReader.readLine() ?: break
+                if (line.trim().isEmpty()) {
+                    continue
+                }
+                val command: Command = parseCommand(line) ?: continue
+                processCommand(command)
+            } while (true)
         }
 
         return cueSheet
@@ -86,7 +82,7 @@ class CueLoader {
                 }
             }
             CommandType.TRACK -> {
-                if (currentFileInfo != null && currentFileInfo != null) {
+                if (currentFileInfo != null) {
                     currentTrackInfo = CueTrackInfo(command.args[0].toInt())
                     currentFileInfo!!.tracks.add(currentTrackInfo!!)
                 }

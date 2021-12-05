@@ -1,82 +1,71 @@
 package info.hildegynoid.cue.converter
 
-import info.hildegynoid.cue.converter.loader.CueLoader
-import javafx.application.Application
-import javafx.application.Platform
-import javafx.scene.Scene
-import javafx.scene.control.Label
-import javafx.scene.input.TransferMode
-import javafx.scene.layout.VBox
-import javafx.stage.Stage
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.WindowState
+import androidx.compose.ui.window.singleWindowApplication
+import info.hildegynoid.cue.converter.view.Toast
+import kotlinx.coroutines.launch
+import java.awt.datatransfer.DataFlavor
+import java.awt.dnd.DnDConstants
+import java.awt.dnd.DropTarget
+import java.awt.dnd.DropTargetAdapter
+import java.awt.dnd.DropTargetDropEvent
 import java.io.File
-import java.nio.file.Path
 
-class Main : Application() {
-    companion object {
-        const val TITLE = "cue-converter"
-        const val VERSION = "1.0"
-        const val WIDTH = 400.0
-        const val HEIGHT = 400.0
-    }
+private val toastMessage: MutableState<String> = mutableStateOf("")
+private val toastState: MutableState<Boolean> = mutableStateOf(false)
 
-    private fun getOutputFilename(input: File): File? {
-        if (!input.isFile) {
-            return null
-        }
+fun main() = singleWindowApplication(
+    title = "Cue sheet converter",
+    state = WindowState(width = 400.dp, height = 400.dp)
+) {
+    val state = remember { ApplicationState() }
+    val scope = rememberCoroutineScope()
 
-        val outputFilebase = Path.of(input.parent, input.nameWithoutExtension)
-        var outputFile = File(outputFilebase.toString() + "-1." + input.extension)
-        for (i in 1..10) {
-            if (!outputFile.exists()) {
-                return outputFile
-            }
-            outputFile = File(outputFilebase.toString() + "-$i." + input.extension)
-        }
-        return null
-    }
-
-    override fun start(stage: Stage) {
-        val root = VBox()
-        val log = VBox()
-        log.children.add(Label("Drop Rekordbox CUE sheet here to convert."))
-        root.children.add(log)
-
-        try {
-            root.setOnDragOver { event ->
-                if (event.dragboard.hasFiles()) {
-                    event.acceptTransferModes(TransferMode.MOVE)
-                }
-            }
-
-            root.setOnDragDropped { event ->
-                val board = event.dragboard
-                if (board.hasFiles()) {
-                    board.files.forEach { file ->
-                        getOutputFilename(file)?.let { outputFile ->
-                            log.children.add(Label("Input: ${file.absolutePath}"))
-                            log.children.add(Label("Output: ${outputFile.absolutePath}"))
-                            val cue = CueLoader(file)
-                            val sheet = cue.load()
-                            outputFile.writeText(sheet.toString())
-                        } ?: log.children.add(Label("Failed to convert ${file.name}"))
+    LaunchedEffect(Unit) {
+        window.dropTarget = DropTarget().apply {
+            addDropTargetListener(object : DropTargetAdapter() {
+                @Synchronized
+                override fun drop(evt: DropTargetDropEvent) {
+                    try {
+                        evt.acceptDrop(DnDConstants.ACTION_REFERENCE)
+                        val droppedFiles = evt.transferable.getTransferData(DataFlavor.javaFileListFlavor) as List<*>
+                        droppedFiles.first()?.let {
+                            scope.launch { state.open(it as File) }
+                        }
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                        showPopupMessage("Error: $ex.message")
                     }
-                    event.isDropCompleted = true
-                } else {
-                    event.isDropCompleted = false
                 }
-            }
-
-            val scene = Scene(root, WIDTH, HEIGHT)
-            stage.title = "$TITLE v.$VERSION"
-            stage.scene = scene
-            stage.show()
-        } catch (e: Exception) {
-            log.children.add(Label("Error: ${e.message}"))
-            e.printStackTrace()
+            })
         }
     }
 
-    override fun stop() {
-        Platform.exit()
+    MaterialTheme {
+        Surface {
+            Column(Modifier.fillMaxSize(), Arrangement.spacedBy(5.dp)) {
+                Text("Drop Rekordbox CUE sheet here to convert.")
+            }
+        }
     }
+
+    Toast(toastMessage.value, toastState)
+}
+
+fun showPopupMessage(text: String) {
+    toastMessage.value = text
+    toastState.value = true
 }
