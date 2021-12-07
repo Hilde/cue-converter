@@ -34,7 +34,7 @@ tasks.test {
 
 compose.desktop {
 	application {
-		mainClass = "MainKt"
+		mainClass = "info.hildegynoid.cue.converter.MainKt"
 		nativeDistributions {
 			targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
 			packageName = "cue-converter"
