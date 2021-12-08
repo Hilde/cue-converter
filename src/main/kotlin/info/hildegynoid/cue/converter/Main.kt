@@ -1,17 +1,22 @@
 package info.hildegynoid.cue.converter
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.singleWindowApplication
@@ -26,6 +31,19 @@ import java.io.File
 
 private val toastMessage: MutableState<String> = mutableStateOf("")
 private val toastState: MutableState<Boolean> = mutableStateOf(false)
+
+@Preview
+@Composable
+fun AppView() = Surface {
+    Column(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+        Text("ここにCueファイルをドロップすると変換します", color = Color.White)
+        Image(
+            painter = painterResource("images/icon_512x512.png"),
+            contentDescription = "image",
+            modifier = Modifier.size(width = 380.dp, height = 380.dp)
+        )
+    }
+}
 
 fun main() = singleWindowApplication(
     title = "Cue sheet converter",
@@ -54,14 +72,7 @@ fun main() = singleWindowApplication(
         }
     }
 
-    MaterialTheme {
-        Surface {
-            Column(Modifier.fillMaxSize(), Arrangement.spacedBy(5.dp)) {
-                Text("Drop Rekordbox CUE sheet here to convert.")
-            }
-        }
-    }
-
+    AppView()
     Toast(toastMessage.value, toastState)
 }
 

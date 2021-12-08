@@ -39,6 +39,14 @@ compose.desktop {
 			targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
 			packageName = "cue-converter"
 			packageVersion = "1.0.0"
+
+			val iconsRoot = project.file("src/main/resources/images")
+			macOS {
+				iconFile.set(iconsRoot.resolve("icon.icns"))
+			}
+			windows {
+				iconFile.set(iconsRoot.resolve("icon.ico"))
+			}
 		}
 	}
 }
