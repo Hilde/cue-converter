@@ -6,6 +6,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, windows-latest]
+        architecture: [x64, x86]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -28,18 +29,20 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**\build.gradle.kts') }}
           restore-keys: ${{ runner.os }}-gradle-
 
-      - name: "Setup Java"
+      - name: "Setup Java ${{ matrix.os }} ${{ matrix.architecture }}"
         uses: actions/setup-java@v2
         with:
           distribution: 'temurin'
           java-version: '17'
-      - name: run test
+          architecture: ${{ matrix.architecture }}
+
+      - name: build
         uses: eskatos/gradle-command-action@v1
         with:
-          arguments: test zip
+          arguments: test createDistributable
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: Package-${{ matrix.os }}
-          path: build/distributions
+          name: Package-${{ matrix.os }}-${{ matrix.architecture }}
+          path: build/compose/binaries/main/app

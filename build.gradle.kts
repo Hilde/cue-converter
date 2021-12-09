@@ -50,9 +50,3 @@ compose.desktop {
 		}
 	}
 }
-
-tasks.register<Zip>("zip") {
-	dependsOn("createDistributable")
-	archiveFileName.set("${project.buildDir}/distributions/cue-converter-${osdetector.classifier}.zip")
-	from("${project.buildDir}/compose/binaries/main/app")
-}
