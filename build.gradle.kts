@@ -1,52 +1,32 @@
-import org.jetbrains.compose.compose
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+val ktor_version: String by project
+val kotlin_version: String by project
+val logback_version: String by project
 
 plugins {
-	kotlin("jvm") version "1.5.31"
-	id("org.jetbrains.compose") version "1.0.0"
-	id("org.jlleitschuh.gradle.ktlint") version "10.2.0"
-	id("com.google.osdetector") version "1.6.2"
+    application
+    kotlin("jvm") version "1.6.10"
 }
 
 group = "info.hildegynoid"
-version = 1.0
+version = "1.0"
+application {
+	mainClassName = "io.ktor.server.netty.EngineMain"
+}
 
 repositories {
-	google()
 	mavenCentral()
-	maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
 dependencies {
-	implementation(compose.desktop.currentOs)
-	testImplementation(kotlin("test"))
+	implementation("io.ktor:ktor-server-core:$ktor_version")
+	implementation("io.ktor:ktor-server-netty:$ktor_version")
+	implementation("io.ktor:ktor-html-builder:$ktor_version")
+	implementation("ch.qos.logback:logback-classic:$logback_version")
+	testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+	testImplementation("io.ktor:ktor-server-tests:$ktor_version")
+	testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }
 
-tasks.withType<KotlinCompile> {
-	kotlinOptions.jvmTarget = "16"
-	kotlinOptions.freeCompilerArgs += "-Xuse-experimental=true -Xopt-in=kotlin.RequiresOptIn"
-}
-
-tasks.test {
-	useJUnitPlatform()
-}
-
-compose.desktop {
-	application {
-		mainClass = "info.hildegynoid.cue.converter.MainKt"
-		nativeDistributions {
-			targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-			packageName = "cue-converter"
-			packageVersion = "1.0.0"
-
-			val iconsRoot = project.file("src/main/resources/images")
-			macOS {
-				iconFile.set(iconsRoot.resolve("icon.icns"))
-			}
-			windows {
-				iconFile.set(iconsRoot.resolve("icon.ico"))
-			}
-		}
-	}
+tasks.register("stage") {
+	dependsOn("installDist")
 }
