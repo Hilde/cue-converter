@@ -21,11 +21,24 @@ import kotlinx.html.FormMethod
 import kotlinx.html.a
 import kotlinx.html.body
 import kotlinx.html.br
+import kotlinx.html.div
 import kotlinx.html.fileInput
+import kotlinx.html.footer
 import kotlinx.html.form
-import kotlinx.html.h2
+import kotlinx.html.head
+import kotlinx.html.label
+import kotlinx.html.meta
+import kotlinx.html.nav
 import kotlinx.html.p
+import kotlinx.html.script
+import kotlinx.html.section
+import kotlinx.html.span
+import kotlinx.html.styleLink
 import kotlinx.html.submitInput
+import kotlinx.html.title
+import kotlinx.html.unsafe
+
+const val titleValue = "cue-converter: Timestamp converter for Rekordbox CUE file"
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -35,33 +48,75 @@ fun Application.module(testing: Boolean = false) {
         var result = ""
 
         static("/static") {
-            resources("files")
+            resources("static")
         }
 
         get("/") {
             call.respondHtml {
+                head {
+                    title { +titleValue }
+                    styleLink("https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css")
+                    meta(name="viewport", content="width=device-width, initial-scale=1")
+                }
                 body {
-                    h2 { +"Timestamp converter for CUE file" }
-
-                    form(
-                        "/submit",
-                        classes = "pure-form-stacked",
-                        encType = FormEncType.multipartFormData,
-                        method = FormMethod.post
-                    ) {
-                        acceptCharset = "utf-8"
-                        fileInput { name = "file" }
-                        submitInput(classes = "pure-button pure-button-primary") { value = "Upload" }
+                    nav("navbar") {
+                        div("navbar-brand") {
+                            a(classes = "navbar-item") { +titleValue }
+                        }
                     }
 
-                    br()
+                    section("section") {
+                        div("container") {
+                            form(
+                                "/submit",
+                                classes = "pure-form-stacked",
+                                encType = FormEncType.multipartFormData,
+                                method = FormMethod.post
+                            ) {
+                                acceptCharset = "utf-8"
 
-                    p { +"Rekordboxが出力するcueファイルを、mixcloudでタイムスタンプが反映されるように変換します。ファイルの内容はサーバ側には保存しません。" }
-                    p { +"Convert the cue file output by Rekordbox so that the timestamp is reflected in mixcloud. The contents of the file will not be stored on the server."}
+                                div("field is-horizontal") {
+                                    div("file") {
+                                        label("file-label") {
+                                            fileInput(classes= "file-input") { name = "file" }
+                                            span("file-cta") {
+                                                span("file-label") { +"Choose a file..." }
+                                            }
+                                            span("file-name") { + "No file selected" }
+                                        }
+                                    }
+                                    submitInput(classes = "button is-primary") { value = "Upload" }
+                                }
+                            }
 
-                    p {
-                        +"Contact: "
-                        a(href = "https://twitter.com/hilde") { +"@hilde" }
+                            br()
+
+                            p { +"Rekordboxが出力するcueファイルを、mixcloudでタイムスタンプが反映されるように変換します。ファイルの内容はサーバ側には保存しません。" }
+                            p { +"Convert the cue file output by Rekordbox so that the timestamp is reflected in mixcloud. The contents of the file will not be stored on the server." }
+                        }
+                    }
+
+                    footer("footer") {
+                        div("content") {
+                            p {
+                                +"Contact: "
+                                a(href = "https://twitter.com/hilde") { +"@hilde" }
+                            }
+                        }
+                    }
+
+                    script {
+                        unsafe {
+                            raw("""
+                                const fileInput = document.querySelector('input[type=file]');
+                                fileInput.onchange = () => {
+                                  if (fileInput.files.length > 0) {
+                                    const fileName = document.querySelector('.file-name');
+                                    fileName.textContent = fileInput.files[0].name;
+                                  }
+                                }
+                        """)
+                        }
                     }
                 }
             }
