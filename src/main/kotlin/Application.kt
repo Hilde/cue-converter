@@ -98,9 +98,13 @@ fun Application.module(testing: Boolean = false) {
 
                     footer("footer") {
                         div("content") {
+                            p { +"Contact" }
                             p {
-                                +"Contact: "
+                                +"Twitter: "
                                 a(href = "https://twitter.com/hilde") { +"@hilde" }
+                            }
+                            p {
+                                +"Discord: Hildeko#1039"
                             }
                         }
                     }
