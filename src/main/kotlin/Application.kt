@@ -18,6 +18,7 @@ import io.ktor.routing.post
 import io.ktor.routing.routing
 import kotlinx.html.FormEncType
 import kotlinx.html.FormMethod
+import kotlinx.html.P
 import kotlinx.html.a
 import kotlinx.html.body
 import kotlinx.html.br
@@ -91,8 +92,16 @@ fun Application.module(testing: Boolean = false) {
 
                             br()
 
-                            p { +"Rekordboxが出力するcueファイルを、mixcloudでタイムスタンプが反映されるように変換します。ファイルの内容はサーバ側には保存しません。" }
+                            p { +"Rekordboxが出力するcueファイルを、Mixcloudでタイムスタンプが反映されるように変換します。ファイルの内容はサーバ側には保存しません。" }
+
                             p { +"Convert the cue file output by Rekordbox so that the timestamp is reflected in mixcloud. The contents of the file will not be stored on the server." }
+
+                            br()
+
+                            p { +"Rekordbox 5.3以降ならPerformanceモードで直接Mixcloudにアップロードできます。"
+                                a("https://cdn.rekordbox.com/files/20200402083423/rekordbox6.0.0_manual_JA.pdf") { +"マニュアル(pdf)" }
+                                +"154ページ参照"
+                            }
                         }
                     }
 
@@ -101,7 +110,7 @@ fun Application.module(testing: Boolean = false) {
                             p { +"Contact" }
                             p {
                                 +"Twitter: "
-                                a(href = "https://twitter.com/hilde") { +"@hilde" }
+                                a("https://twitter.com/hilde") { +"@hilde" }
                             }
                             p {
                                 +"Discord: Hildeko#1039"
