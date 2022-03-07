@@ -18,7 +18,6 @@ import io.ktor.routing.post
 import io.ktor.routing.routing
 import kotlinx.html.FormEncType
 import kotlinx.html.FormMethod
-import kotlinx.html.P
 import kotlinx.html.a
 import kotlinx.html.body
 import kotlinx.html.br
@@ -26,6 +25,7 @@ import kotlinx.html.div
 import kotlinx.html.fileInput
 import kotlinx.html.footer
 import kotlinx.html.form
+import kotlinx.html.h3
 import kotlinx.html.head
 import kotlinx.html.label
 import kotlinx.html.meta
@@ -102,6 +102,13 @@ fun Application.module(testing: Boolean = false) {
                                 a("https://cdn.rekordbox.com/files/20200402083423/rekordbox6.0.0_manual_JA.pdf") { +"マニュアル(pdf)" }
                                 +"154ページ参照"
                             }
+
+                            br()
+
+                            div {
+                                h3 { +"更新履歴" }
+                                p { +"2022-03-07 修正: 1時間を超えるタイムスタンプを反映できていませんでした。" }
+                            }
                         }
                     }
 
@@ -140,8 +147,8 @@ fun Application.module(testing: Boolean = false) {
             val part = multipartData.readPart()
             if (part != null && part is PartData.FileItem) {
                 part.streamProvider().use { stream ->
-                    var cue = CueLoader(stream)
-                    var sheet = cue.load()
+                    val cue = CueLoader(stream)
+                    val sheet = cue.load()
                     result = sheet.toString()
                 }
                 fileName = downloadFileName(part.originalFileName) ?: "cuesheet.cue"

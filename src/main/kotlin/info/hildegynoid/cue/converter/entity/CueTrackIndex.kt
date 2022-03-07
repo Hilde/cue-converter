@@ -7,6 +7,7 @@ data class CueTrackIndex(
     var hours: Int = 0 // rekordbox-dj
 ) {
     override fun toString(): String {
-        return String.format("%02d:%02d:%02d", minutes, seconds, frames)
+        val min = minutes + hours * 60
+        return String.format("%02d:%02d:%02d", min, seconds, frames)
     }
 }

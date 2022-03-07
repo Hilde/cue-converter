@@ -73,3 +73,8 @@ FILE "01 REC-2021-10-05 Electronica mix.wav" WAVE
 		PERFORMER "matryoshka"
 		FILE "/Media/matryoshka - Laideronnette - 03 Sacred Play Secret Place.mp3" WAVE
 		INDEX 01 00:44:41
+	TRACK 15 AUDIO
+		TITLE "Hogehoge"
+		PERFORMER "Fugafuga"
+		FILE "/Media/test.mp3" WAVE
+		INDEX 01 01:03:04
