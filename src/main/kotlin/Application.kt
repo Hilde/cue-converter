@@ -25,8 +25,9 @@ import kotlinx.html.div
 import kotlinx.html.fileInput
 import kotlinx.html.footer
 import kotlinx.html.form
-import kotlinx.html.h3
 import kotlinx.html.head
+import kotlinx.html.header
+import kotlinx.html.id
 import kotlinx.html.label
 import kotlinx.html.meta
 import kotlinx.html.nav
@@ -67,7 +68,14 @@ fun Application.module(testing: Boolean = false) {
                     }
 
                     section("section") {
+                        id = "dropArea"
+
                         div("container") {
+                            p("has-text-grey") { + "ファイルをここにドロップするか、クリックして選択" }
+                            p("has-text-grey") { + "Drop a file here or choose a file" }
+
+                            br()
+
                             form(
                                 "/submit",
                                 classes = "pure-form-stacked",
@@ -79,7 +87,10 @@ fun Application.module(testing: Boolean = false) {
                                 div("field is-horizontal") {
                                     div("file") {
                                         label("file-label") {
-                                            fileInput(classes= "file-input") { name = "file" }
+                                            fileInput(classes= "file-input") {
+                                                name = "file"
+                                                id = "file-input"
+                                            }
                                             span("file-cta") {
                                                 span("file-label") { +"Choose a file..." }
                                             }
@@ -92,22 +103,32 @@ fun Application.module(testing: Boolean = false) {
 
                             br()
 
-                            p { +"Rekordboxが出力するcueファイルを、Mixcloudでタイムスタンプが反映されるように変換します。ファイルの内容はサーバ側には保存しません。" }
+                            div("card") {
+                                div("card-content") {
+                                    p { +"Rekordboxが出力するcueファイルを、Mixcloudでタイムスタンプが反映されるように変換します。ファイルの内容はサーバ側には保存しません。" }
+                                    p { +"Convert the cue file output by Rekordbox so that the timestamp is reflected in mixcloud. The contents of the file will not be stored on the server." }
 
-                            p { +"Convert the cue file output by Rekordbox so that the timestamp is reflected in mixcloud. The contents of the file will not be stored on the server." }
+                                    br()
 
-                            br()
-
-                            p { +"Rekordbox 5.3以降ならPerformanceモードで直接Mixcloudにアップロードできます。"
-                                a("https://cdn.rekordbox.com/files/20200402083423/rekordbox6.0.0_manual_JA.pdf") { +"マニュアル(pdf)" }
-                                +"154ページ参照"
+                                    p { +"Rekordbox 5.3以降ならPerformanceモードで直接Mixcloudにアップロードできます。"
+                                        a("https://cdn.rekordbox.com/files/20200402083423/rekordbox6.0.0_manual_JA.pdf") { +"マニュアル(pdf)" }
+                                        +"154ページ参照"
+                                    }
+                                }
                             }
 
                             br()
 
-                            div {
-                                h3 { +"更新履歴" }
-                                p { +"2022-03-07 修正: 1時間を超えるタイムスタンプを反映できていませんでした。" }
+                            div("card") {
+                                header("card-header") {
+                                    p("card-header-title") {
+                                        +"更新履歴"
+                                    }
+                                }
+                                div("card-content") {
+                                    p { +"2022-06-10 追加: ファイルのドラッグ＆ドロップに対応しました。" }
+                                    p { +"2022-03-07 修正: 1時間を超えるタイムスタンプを反映できていませんでした。" }
+                                }
                             }
                         }
                     }
@@ -128,7 +149,29 @@ fun Application.module(testing: Boolean = false) {
                     script {
                         unsafe {
                             raw("""
-                                const fileInput = document.querySelector('input[type=file]');
+                                const dropArea = document.getElementById('dropArea');
+                                const fileInput = document.getElementById('file-input');
+                                dropArea.addEventListener('dragover', function(e) {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    this.style.background = '#e1e7f0';
+                                }, false);
+                                dropArea.addEventListener('dragleave', function(e) {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    this.style.background = '#fff';
+                                }, false);
+                                dropArea.addEventListener('drop', function(e) {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    this.style.background = '#fff';
+                                    if (e.dataTransfer.files.length > 0) {
+                                      fileInput.files = e.dataTransfer.files;
+                                      const fileName = document.querySelector('.file-name');
+                                      fileName.textContent = fileInput.files[0].name;
+                                    }
+                                }, false);
+
                                 fileInput.onchange = () => {
                                   if (fileInput.files.length > 0) {
                                     const fileName = document.querySelector('.file-name');
