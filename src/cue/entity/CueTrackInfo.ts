@@ -25,7 +25,7 @@ export class CueTrackInfo {
   }
 
   getTrack(): string {
-    return `${this.number}.${this.performer} - ${this.title}`;
+    return `${this.performer} - ${this.title}`;
   }
 
   toString(): string {

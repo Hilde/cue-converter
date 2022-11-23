@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Container } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 
@@ -8,19 +8,21 @@ import Button from '../components/Button';
 import Header from '../components/Header';
 import Copyright from '../components/Copyright';
 // import FileUpload from '../components/FileUpload';
-// import TextField from '../components/TextField';
 import Paper from '../components/Paper';
 import { CueLoader } from '../cue/loader/CueLoader';
 import { fetchAsText } from '../cue/Utils';
 import StyledDropZone from '../components/StyledDropZone';
 import { useSnackbar } from '../utils/snackbar/useSnackbar';
+import TrackListGenerator from '../components/TrackListGenerator';
 
 export default function AppMain() {
   const { showSnackbar } = useSnackbar();
 
   // const [content, setContent] = useState<string>('');
   // const [cueData, setCueData] = useState<string>('');
-  // const [tracks, setTracks] = useState<string>('');
+  const [tracks, setTracks] = useState<Array<string>>([]);
+  const [performer, setPerformer] = useState('');
+  const [title, setTitle] = useState('');
 
   const getDownloadFileName = (filename: string) =>
     filename.replace('.', '-1.');
@@ -53,7 +55,9 @@ export default function AppMain() {
       const cueLoader = new CueLoader();
       const cue = cueLoader.load(text);
       // setCueData(cue.toString());
-      // setTracks(cue.getTracks().join('\n'));
+      setTracks(cue.getTracks());
+      setTitle(cue.getTitle());
+      setPerformer(cue.getPerformer());
 
       const filename = getDownloadFileName(file.name);
       download(filename, cue.toString()).then(() => {
@@ -106,9 +110,11 @@ export default function AppMain() {
               Select file
             </Button>
           </Paper>
-          {/* <Paper> */}
-          {/*   <TextField multiline fullWidth value={tracks} /> */}
-          {/* </Paper> */}
+          {tracks.length > 0 &&
+            <Paper>
+              <TrackListGenerator performer={performer} title={title} tracks={tracks}/>
+            </Paper>
+          }
         </Container>
       </StyledDropZone>
       <Copyright />
