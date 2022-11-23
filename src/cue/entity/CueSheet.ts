@@ -18,6 +18,14 @@ export class CueSheet {
     return list;
   }
 
+  getTitle(): string {
+    return this.title;
+  }
+
+  getPerformer(): string {
+    return this.performer;
+  };
+
   toString = (): string => {
     let result = '';
 
