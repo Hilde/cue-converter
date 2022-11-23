@@ -7,7 +7,6 @@ import './AppMain.css';
 import Button from '../components/Button';
 import Header from '../components/Header';
 import Copyright from '../components/Copyright';
-// import FileUpload from '../components/FileUpload';
 import Paper from '../components/Paper';
 import { CueLoader } from '../cue/loader/CueLoader';
 import { fetchAsText } from '../cue/Utils';
@@ -18,8 +17,6 @@ import TrackListGenerator from '../components/TrackListGenerator';
 export default function AppMain() {
   const { showSnackbar } = useSnackbar();
 
-  // const [content, setContent] = useState<string>('');
-  // const [cueData, setCueData] = useState<string>('');
   const [tracks, setTracks] = useState<Array<string>>([]);
   const [performer, setPerformer] = useState('');
   const [title, setTitle] = useState('');
@@ -50,11 +47,9 @@ export default function AppMain() {
       }
 
       const text = await fetchAsText(file);
-      // setContent(text);
 
       const cueLoader = new CueLoader();
       const cue = cueLoader.load(text);
-      // setCueData(cue.toString());
       setTracks(cue.getTracks());
       setTitle(cue.getTitle());
       setPerformer(cue.getPerformer());
@@ -104,7 +99,6 @@ export default function AppMain() {
           <Paper>
             <p>.cueファイルをここにドロップするか、クリックして選択</p>
             <p>Drop here or choose a .cue file</p>
-            {/* <FileUpload setFile={fileHandler} /> */}
             <input {...getInputProps()} />
             <Button type="button" onClick={open}>
               Select file
