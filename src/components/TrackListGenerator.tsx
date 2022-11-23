@@ -173,8 +173,8 @@ export default function TrackListGenerator({
             {title}
           </Typography>
           <ol style={{ paddingLeft: getListPadding() }}>
-            {tracks.map((track) => (
-              <li style={{ fontSize: bodyFontSize }} key={track}>
+            {tracks.map((track, index) => (
+              <li style={{ fontSize: bodyFontSize }} key={index.toString() + track}>
                 <Typography variant="body1" sx={{ fontSize: bodyFontSize }}>
                   {track}
                 </Typography>
