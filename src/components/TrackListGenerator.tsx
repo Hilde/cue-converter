@@ -7,20 +7,26 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
+import html2canvas from 'html2canvas';
+
 import BGSelector from './BGSelector';
 import ColorPickerButton from './ColorPickerButton';
 import TextField from './TextField';
+import Button from './Button';
 
 export type TrackListGeneratorProps = {
   performer: string;
   title: string;
   tracks: Array<string>;
+  baseFileName: string;
 };
 
 export default function TrackListGenerator({
   performer: performer_,
   title: title_,
   tracks: tracks_,
+  baseFileName,
 }: TrackListGeneratorProps) {
   const getTitle = () => {
     if (title_ && performer_) return `${title_} by ${performer_}`;
@@ -70,12 +76,24 @@ export default function TrackListGenerator({
     setTracks(e.target.value.split(/\r?\n/));
   };
 
+  const handleSaveImage = () => {
+    const target = document.getElementById('track-list-box');
+    if (target === null) return;
+
+    html2canvas(target).then((canvas) => {
+      const url = canvas.toDataURL('image/png', 1.0);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${baseFileName}.png`;
+      a.click();
+      a.remove();
+    });
+  };
+
   const boxStyle = {
+    position: 'relative',
     width: 800,
     height: 800,
-    borderColor: 'blue',
-    borderWidth: 1,
-    borderStyle: 'solid',
     color: textColor,
     opacity: 1,
     backgroundColor,
@@ -93,7 +111,7 @@ export default function TrackListGenerator({
       zIndex: 2,
     },
     '&>div': {
-      position: 'relative',
+      position: 'absolute',
       zIndex: 3,
       m: 4,
     },
@@ -126,13 +144,11 @@ export default function TrackListGenerator({
             aria-labelledby="background-opacity-slider"
           />
         </FormControl>
-        <FormControl>
-          <ColorPickerButton
-            defaultColor="#000"
-            onChange={handleBackgroundColorChange}
-            label="Background"
-          />
-        </FormControl>
+        <ColorPickerButton
+          defaultColor="#000"
+          onChange={handleBackgroundColorChange}
+          label="Background"
+        />
       </Stack>
       <Stack direction="row" spacing={3} sx={{ mb: 1 }}>
         <FormControl sx={{ minWidth: 180 }}>
@@ -159,22 +175,29 @@ export default function TrackListGenerator({
             aria-labelledby="body-font-size-slider"
           />
         </FormControl>
-        <FormControl>
-          <ColorPickerButton
-            defaultColor="#FFF"
-            onChange={handleTextColorChange}
-            label="Text"
-          />
+        <ColorPickerButton
+          defaultColor="#FFF"
+          onChange={handleTextColorChange}
+          label="Text"
+        />
+        <Box sx={{ flexGrow: 1 }} />
+        <FormControl margin="normal">
+          <Button type="button" onClick={handleSaveImage}>
+            <SaveIcon />
+          </Button>
         </FormControl>
       </Stack>
-      <Box sx={boxStyle}>
+      <Box id="track-list-box" sx={boxStyle}>
         <Box>
           <Typography variant="h4" sx={{ mb: 1, fontSize: titleFontSize }}>
             {title}
           </Typography>
           <ol style={{ paddingLeft: getListPadding() }}>
             {tracks.map((track, index) => (
-              <li style={{ fontSize: bodyFontSize }} key={index.toString() + track}>
+              <li
+                style={{ fontSize: bodyFontSize }}
+                key={index.toString() + track}
+              >
                 <Typography variant="body1" sx={{ fontSize: bodyFontSize }}>
                   {track}
                 </Typography>
