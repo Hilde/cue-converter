@@ -20,9 +20,12 @@ export default function AppMain() {
   const [tracks, setTracks] = useState<Array<string>>([]);
   const [performer, setPerformer] = useState('');
   const [title, setTitle] = useState('');
+  const [baseFileName, setBaseFileName] = useState('');
 
   const getDownloadFileName = (filename: string) =>
     filename.replace('.', '-1.');
+
+  const getBaseFileName = (filename: string) => filename.replace(/\..+$/, '');
 
   const download = async (filename: string, data: string) => {
     const blob = new Blob([data], { type: 'text/plain' });
@@ -53,6 +56,7 @@ export default function AppMain() {
       setTracks(cue.getTracks());
       setTitle(cue.getTitle());
       setPerformer(cue.getPerformer());
+      setBaseFileName(getBaseFileName(file.name));
 
       const filename = getDownloadFileName(file.name);
       download(filename, cue.toString()).then(() => {
@@ -104,11 +108,16 @@ export default function AppMain() {
               Select file
             </Button>
           </Paper>
-          {tracks.length > 0 &&
+          {tracks.length > 0 && (
             <Paper>
-              <TrackListGenerator performer={performer} title={title} tracks={tracks}/>
+              <TrackListGenerator
+                performer={performer}
+                title={title}
+                tracks={tracks}
+                baseFileName={baseFileName}
+              />
             </Paper>
-          }
+          )}
         </Container>
       </StyledDropZone>
       <Copyright />

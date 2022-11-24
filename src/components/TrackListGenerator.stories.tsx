@@ -14,7 +14,7 @@ export default {
 type StoryTemplateType = ComponentStory<typeof StoryTemplate>;
 
 function StoryTemplate({ tracks, performer, title }: TrackListGeneratorProps) {
-  return <TrackListGenerator tracks={tracks} performer={performer} title={title}/>;
+  return <TrackListGenerator tracks={tracks} performer={performer} title={title} baseFileName="demo" />;
 }
 
 export const Default = StoryTemplate.bind({}) as StoryTemplateType;

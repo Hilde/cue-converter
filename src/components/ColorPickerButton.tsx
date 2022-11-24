@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, FormControl } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { ColorResult, SketchPicker } from 'react-color';
 
 export type ColorPickerButtonProps = {
@@ -66,7 +66,7 @@ export default function ColorPickerButton(props: ColorPickerButtonProps) {
   };
 
   return (
-    <FormControl margin="normal">
+    <>
       <Button onClick={handleClick} variant="outlined" size="large">
         <div style={styles.swatch} />
         {label}
@@ -82,6 +82,6 @@ export default function ColorPickerButton(props: ColorPickerButtonProps) {
           />
         </Box>
       ) : null}
-    </FormControl>
+    </>
   );
 }
