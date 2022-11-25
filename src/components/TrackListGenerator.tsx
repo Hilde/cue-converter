@@ -115,13 +115,17 @@ export default function TrackListGenerator({
       zIndex: 3,
       m: 4,
     },
+    // Workaround for list glitch of html2canvas
+    // See: https://github.com/niklasvh/html2canvas/issues/177#issuecomment-1183693634
+    '& ol li:before': {
+      content: '""',
+    },
   };
 
-  // TODO
-  // const getListPadding = (): number => {
-  //   if (bodyFontSize < 20) return bodyFontSize * 2;
-  //   return bodyFontSize + 20;
-  // };
+  const getListPadding = (): number => {
+    if (bodyFontSize < 20) return bodyFontSize * 2;
+    return bodyFontSize + 20;
+  };
 
   // @ts-ignore
   return (
@@ -193,22 +197,23 @@ export default function TrackListGenerator({
           <Typography variant="h4" sx={{ mb: 1, fontSize: titleFontSize }}>
             {title}
           </Typography>
-          {/* <ol style={{ paddingLeft: getListPadding() }}> */}
-          {tracks.map((track, index) => (
-            // <li
-            //   style={{ fontSize: bodyFontSize }}
-            //   key={index.toString() + track}
-            // >
-            <Typography
-              key={index.toString() + track}
-              variant="body1"
-              sx={{ fontSize: bodyFontSize }}
-            >
-              {track}
-            </Typography>
-            // </li>
-          ))}
-          {/* </ol> */}
+          <ol style={{ paddingLeft: getListPadding() }}>
+            {tracks.map((track, index) => (
+              <li
+                style={{ fontSize: bodyFontSize }}
+                key={index.toString() + track}
+              >
+                <Typography
+                  key={index.toString() + track}
+                  variant="body1"
+                  component="span"
+                  sx={{ fontSize: bodyFontSize }}
+                >
+                  {track}
+                </Typography>
+              </li>
+            ))}
+          </ol>
         </Box>
       </Box>
 
