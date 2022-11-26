@@ -1,6 +1,8 @@
-import SnackbarContextProvider from '../src/utils/snackbar/useSnackbar';
-import { CssBaseline } from '@mui/material';
 import React from 'react';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { CssBaseline } from '@mui/material';
+
+import SnackbarContextProvider from '../src/utils/snackbar/useSnackbar';
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },
@@ -18,7 +20,11 @@ export const decorators = [
       <>
         <CssBaseline />
         <SnackbarContextProvider>
-          <Story />
+          <MemoryRouter>
+            <Routes>
+              <Route path="/" element={<Story />} />
+            </Routes>
+          </MemoryRouter>
         </SnackbarContextProvider>
       </>
     );
