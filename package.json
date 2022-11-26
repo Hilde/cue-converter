@@ -21,14 +21,14 @@
     "react-color": "^2.19.3",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
+    "react-router-dom": "^6.4.3",
     "react-scripts": "5.0.1",
     "typescript": "^4.8.4",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "cross-env PUBLIC_URL=/ react-scripts start",
     "build": "react-scripts build",
-    "gh-pages-build": "cross-env PUBLIC_URL=/cue-converter react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 6006 -s public",

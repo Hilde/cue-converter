@@ -5,8 +5,6 @@ import { useDropzone } from 'react-dropzone';
 import './AppMain.css';
 
 import Button from '../components/Button';
-import Header from '../components/Header';
-import Copyright from '../components/Copyright';
 import Paper from '../components/Paper';
 import { CueLoader } from '../cue/loader/CueLoader';
 import { fetchAsText } from '../cue/Utils';
@@ -86,41 +84,37 @@ export default function AppMain() {
   });
 
   return (
-    <>
-      <Header />
-      <StyledDropZone getRootProps={getRootProps} isDragActive={isDragActive}>
-        <Container component="main" maxWidth="md" sx={{ mb: 4 }}>
+    <StyledDropZone getRootProps={getRootProps} isDragActive={isDragActive}>
+      <Container component="main" maxWidth="md" sx={{ mb: 4 }}>
+        <Paper>
+          <p>
+            rekordboxが出力するcueファイルを、Mixcloudでタイムスタンプが反映されるように変換します。ファイルの内容はブラウザ内で変換され、サーバ側には送信しません。
+          </p>
+          <p>
+            Convert the cue file output by rekordbox so that the timestamp is
+            reflected in Mixcloud. The contents of the file will be converted in
+            your browser and not be sent to the server.
+          </p>
+        </Paper>
+        <Paper>
+          <p>.cueファイルをここにドロップするか、クリックして選択</p>
+          <p>Drop here or choose a .cue file</p>
+          <input {...getInputProps()} />
+          <Button type="button" onClick={open}>
+            Select file
+          </Button>
+        </Paper>
+        {tracks.length > 0 && (
           <Paper>
-            <p>
-              Rekordboxが出力するcueファイルを、Mixcloudでタイムスタンプが反映されるように変換します。ファイルの内容はブラウザ内で変換され、サーバ側には送信しません。
-            </p>
-            <p>
-              Convert the cue file output by Rekordbox so that the timestamp is
-              reflected in mixcloud. The contents of the file will be converted
-              in your browser and not be sent to the server.
-            </p>
+            <TrackListGenerator
+              performer={performer}
+              title={title}
+              tracks={tracks}
+              baseFileName={baseFileName}
+            />
           </Paper>
-          <Paper>
-            <p>.cueファイルをここにドロップするか、クリックして選択</p>
-            <p>Drop here or choose a .cue file</p>
-            <input {...getInputProps()} />
-            <Button type="button" onClick={open}>
-              Select file
-            </Button>
-          </Paper>
-          {tracks.length > 0 && (
-            <Paper>
-              <TrackListGenerator
-                performer={performer}
-                title={title}
-                tracks={tracks}
-                baseFileName={baseFileName}
-              />
-            </Paper>
-          )}
-        </Container>
-      </StyledDropZone>
-      <Copyright />
-    </>
+        )}
+      </Container>
+    </StyledDropZone>
   );
 }
