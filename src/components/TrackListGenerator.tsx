@@ -182,11 +182,8 @@ export default function TrackListGenerator({
           label="Text"
         />
         <FormControlLabel
-          control={
-            <Checkbox defaultChecked onChange={handleIndexNumberChange} />
-          }
+          control={<Checkbox onChange={handleIndexNumberChange} />}
           label="Index number"
-          defaultChecked={indexNumber}
         />
         <Box sx={{ flexGrow: 1 }} />
 
