@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Box,
   FormControl,
+  FormControlLabel,
   SelectChangeEvent,
   Slider,
   Stack,
@@ -16,6 +17,7 @@ import ColorPickerButton from './ColorPickerButton';
 import TextField from './TextField';
 import Button from './Button';
 import DrawArea from './DrawArea';
+import Checkbox from './Checkbox';
 
 export type TrackListGeneratorProps = {
   performer: string;
@@ -43,8 +45,9 @@ export default function TrackListGenerator({
   const [opacity, setOpacity] = React.useState(0.7);
   const [backgroundColor, setBackgroundColor] = React.useState('#000000');
   const [textColor, setTextColor] = React.useState('#FFFFFF');
-  const [titleFontSize, setTitleFontSize] = React.useState(18);
-  const [bodyFontSize, setBodyFontSize] = React.useState(14);
+  const [titleFontSize, setTitleFontSize] = React.useState(1.8);
+  const [bodyFontSize, setBodyFontSize] = React.useState(1.0);
+  const [indexNumber, setIndexNumber] = React.useState(false);
 
   const iframeRef = React.useRef<any>(null);
 
@@ -80,6 +83,10 @@ export default function TrackListGenerator({
     setTracks(e.target.value.split(/\r?\n/));
   };
 
+  const handleIndexNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIndexNumber(e.target.checked);
+  };
+
   const handleSaveImage = () => {
     const src =
       iframeRef.current?.contentWindow?.document.getElementById('draw-area');
@@ -95,25 +102,25 @@ export default function TrackListGenerator({
     });
   };
 
-  const draw = () => {
-    const src =
-      iframeRef.current?.contentWindow?.document.getElementById('draw-area');
-    if (src) {
-      html2canvas(src, {
-        scale: 2,
-      }).then((canvas) => {
-        const placeholder = document.getElementById('canvasPlaceholder');
-        if (placeholder) {
-          placeholder.lastElementChild?.remove();
-          placeholder.appendChild(canvas);
-        }
-      });
-    }
-  };
-
-  const handleMounted = () => {
-    draw();
-  };
+  // const draw = () => {
+  //   const src =
+  //     iframeRef.current?.contentWindow?.document.getElementById('draw-area');
+  //   if (src) {
+  //     html2canvas(src, {
+  //       scale: 2,
+  //     }).then((canvas) => {
+  //       const placeholder = document.getElementById('canvasPlaceholder');
+  //       if (placeholder) {
+  //         placeholder.lastElementChild?.remove();
+  //         placeholder.appendChild(canvas);
+  //       }
+  //     });
+  //   }
+  // };
+  //
+  // const handleMounted = () => {
+  //   draw();
+  // };
 
   return (
     <Box sx={{ minWidth: 800 }}>
@@ -145,24 +152,26 @@ export default function TrackListGenerator({
       <Stack direction="row" spacing={3} sx={{ mb: 1 }}>
         <FormControl sx={{ minWidth: 180 }}>
           <Typography id="title-font-size-slider" gutterBottom>
-            Title font size: {titleFontSize}px
+            Title font size: {titleFontSize}rem
           </Typography>
           <Slider
-            defaultValue={18}
-            min={6}
-            max={60}
+            defaultValue={1.8}
+            min={0.4}
+            max={6.0}
+            step={0.1}
             onChange={handleTitleFontSizeChange}
             aria-labelledby="title-font-size-slider"
           />
         </FormControl>
         <FormControl sx={{ minWidth: 180 }}>
           <Typography id="body-font-size-slider" gutterBottom>
-            Body font size: {bodyFontSize}px
+            Body font size: {bodyFontSize}rem
           </Typography>
           <Slider
-            defaultValue={14}
-            min={6}
-            max={60}
+            defaultValue={1.0}
+            min={0.4}
+            max={6.0}
+            step={0.1}
             onChange={handleBodyFontSizeChange}
             aria-labelledby="body-font-size-slider"
           />
@@ -172,24 +181,34 @@ export default function TrackListGenerator({
           onChange={handleTextColorChange}
           label="Text"
         />
-        <Box sx={{ flexGrow: 1 }} />
-        <FormControl margin="normal">
-          <Button type="button" onClick={draw}>
-            redraw
-          </Button>
+        <FormControl>
+          <FormControlLabel
+            control={
+              <Checkbox defaultChecked onChange={handleIndexNumberChange} />
+            }
+            label="Index number"
+            defaultChecked={indexNumber}
+          />
         </FormControl>
-        <FormControl margin="normal">
-          <Button type="button" onClick={handleSaveImage}>
+        <Box sx={{ flexGrow: 1 }} />
+
+        {/* <FormControl margin="normal"> */}
+        {/*  <Button type="button" onClick={draw}> */}
+        {/*     redraw */}
+        {/*   </Button> */}
+        {/* </FormControl> */}
+
+        <FormControl>
+          <Button type="button" onClick={handleSaveImage} size="large">
             <SaveIcon />
           </Button>
         </FormControl>
       </Stack>
-
       <Frame
         ref={iframeRef}
         head={<link rel="stylesheet" href="/iframe.css" />}
-        contentDidMount={handleMounted}
-        // scrolling="no"
+        // contentDidMount={handleMounted}
+        scrolling="no"
         style={{ width: '512px', height: '512px', border: 'none' }}
       >
         <DrawArea
@@ -201,10 +220,11 @@ export default function TrackListGenerator({
           backgroundOpacity={opacity}
           backgroundImage={background}
           tracks={tracks}
+          indexNumber={indexNumber}
         />
       </Frame>
 
-      <div id="canvasPlaceholder" />
+      {/* <div id="canvasPlaceholder" /> */}
 
       <Box width="800px">
         <FormControl fullWidth sx={{ my: 2 }}>

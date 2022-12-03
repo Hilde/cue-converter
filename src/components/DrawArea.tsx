@@ -22,9 +22,11 @@ export default function DrawArea({
   tracks: Array<string>;
   indexNumber?: boolean;
 }) {
-  const getListPadding = (): number => {
-    if (bodyFontSize < 20) return bodyFontSize * 2;
-    return bodyFontSize + 20;
+  const getTitleFontSize = (): string => `${titleFontSize}rem`;
+  const getBodyFontSize = (): string => `${bodyFontSize}rem`;
+  const getListPadding = (): string => {
+    if (bodyFontSize < 20) return `${bodyFontSize * 2}rem`;
+    return `${bodyFontSize + 20}rem`;
   };
 
   return (
@@ -41,17 +43,14 @@ export default function DrawArea({
         }}
       />
       <Box className="list-area">
-        <Typography
-          sx={{ m: 0 }}
-          style={{ margin: 0, fontSize: titleFontSize }}
-        >
+        <Typography style={{ margin: 0, fontSize: getTitleFontSize() }}>
           {title}
         </Typography>
         {indexNumber && (
           <ol style={{ paddingLeft: getListPadding() }}>
             {tracks.map((track, index) => (
               <li
-                style={{ fontSize: bodyFontSize }}
+                style={{ fontSize: getBodyFontSize() }}
                 key={index.toString() + track}
               >
                 {track}
@@ -60,17 +59,16 @@ export default function DrawArea({
           </ol>
         )}
         {!indexNumber && (
-          <>
+          <div style={{ marginTop: '1rem' }}>
             {tracks.map((track, index) => (
               <Typography
-                variant="body1"
-                style={{ fontSize: bodyFontSize }}
+                style={{ margin: '0.1rem 0', fontSize: getBodyFontSize() }}
                 key={index.toString() + track}
               >
                 {track}
               </Typography>
             ))}
-          </>
+          </div>
         )}
       </Box>
     </Box>

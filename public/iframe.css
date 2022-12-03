@@ -30,6 +30,6 @@ body {
 .list-area {
   position: absolute;
   z-index: 3;
-  padding: 1.5em;
+  padding: 1.5rem;
   opacity: unset;
 }
