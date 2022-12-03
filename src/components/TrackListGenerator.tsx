@@ -197,7 +197,12 @@ export default function TrackListGenerator({
       </Stack>
       <Frame
         ref={iframeRef}
-        head={<link rel="stylesheet" href="/iframe.css" />}
+        head={
+          <link
+            rel="stylesheet"
+            href={`${process.env.PUBLIC_URL}/iframe.css`}
+          />
+        }
         // contentDidMount={handleMounted}
         scrolling="no"
         style={{ width: '512px', height: '512px', border: 'none' }}
