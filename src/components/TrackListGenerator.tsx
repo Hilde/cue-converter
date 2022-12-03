@@ -2,18 +2,22 @@ import React from 'react';
 import {
   Box,
   FormControl,
+  FormControlLabel,
   SelectChangeEvent,
   Slider,
   Stack,
   Typography,
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
+import Frame from 'react-frame-component';
 import html2canvas from 'html2canvas';
 
 import BGSelector from './BGSelector';
 import ColorPickerButton from './ColorPickerButton';
 import TextField from './TextField';
 import Button from './Button';
+import DrawArea from './DrawArea';
+import Checkbox from './Checkbox';
 
 export type TrackListGeneratorProps = {
   performer: string;
@@ -41,8 +45,11 @@ export default function TrackListGenerator({
   const [opacity, setOpacity] = React.useState(0.7);
   const [backgroundColor, setBackgroundColor] = React.useState('#000000');
   const [textColor, setTextColor] = React.useState('#FFFFFF');
-  const [titleFontSize, setTitleFontSize] = React.useState(18);
-  const [bodyFontSize, setBodyFontSize] = React.useState(14);
+  const [titleFontSize, setTitleFontSize] = React.useState(1.8);
+  const [bodyFontSize, setBodyFontSize] = React.useState(1.0);
+  const [indexNumber, setIndexNumber] = React.useState(false);
+
+  const iframeRef = React.useRef<any>(null);
 
   const getFirstValue = <T,>(val: T | T[]) =>
     Array.isArray(val) ? val[0] : val;
@@ -76,11 +83,16 @@ export default function TrackListGenerator({
     setTracks(e.target.value.split(/\r?\n/));
   };
 
-  const handleSaveImage = () => {
-    const target = document.getElementById('track-list-box');
-    if (target === null) return;
+  const handleIndexNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIndexNumber(e.target.checked);
+  };
 
-    html2canvas(target).then((canvas) => {
+  const handleSaveImage = () => {
+    const src =
+      iframeRef.current?.contentWindow?.document.getElementById('draw-area');
+    if (src === null) return;
+
+    html2canvas(src, { scale: 2 }).then((canvas) => {
       const url = canvas.toDataURL('image/png', 1.0);
       const a = document.createElement('a');
       a.href = url;
@@ -90,47 +102,26 @@ export default function TrackListGenerator({
     });
   };
 
-  const boxStyle = {
-    position: 'relative',
-    width: 800,
-    height: 800,
-    color: textColor,
-    opacity: 1,
-    backgroundColor,
-    zIndex: 1,
-    '&:before': {
-      opacity,
-      content: '""',
-      backgroundImage: `url(${background})`,
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      backgroundSize: 'cover',
-      width: 'inherit',
-      height: 'inherit',
-      position: 'absolute',
-      zIndex: 2,
-    },
-    '&>div': {
-      position: 'absolute',
-      zIndex: 3,
-      m: 4,
-    },
-    // Workaround for list glitch of html2canvas
-    // See: https://github.com/niklasvh/html2canvas/issues/177#issuecomment-1183693634
-    // '& ol li:before': {
-    //   content: 'attr(data-number)',
-    //   // marginLeft: 'rem',
-    //   color: 'rgba(0,0,0,0)',
-    // },
-  };
-
-  // TODO
-  // const getListPadding = (): number => {
-  //   if (bodyFontSize < 20) return bodyFontSize * 2;
-  //   return bodyFontSize + 20;
+  // const draw = () => {
+  //   const src =
+  //     iframeRef.current?.contentWindow?.document.getElementById('draw-area');
+  //   if (src) {
+  //     html2canvas(src, {
+  //       scale: 2,
+  //     }).then((canvas) => {
+  //       const placeholder = document.getElementById('canvasPlaceholder');
+  //       if (placeholder) {
+  //         placeholder.lastElementChild?.remove();
+  //         placeholder.appendChild(canvas);
+  //       }
+  //     });
+  //   }
+  // };
+  //
+  // const handleMounted = () => {
+  //   draw();
   // };
 
-  // @ts-ignore
   return (
     <Box sx={{ minWidth: 800 }}>
       <Typography variant="h5" sx={{ mb: 2 }}>
@@ -161,24 +152,26 @@ export default function TrackListGenerator({
       <Stack direction="row" spacing={3} sx={{ mb: 1 }}>
         <FormControl sx={{ minWidth: 180 }}>
           <Typography id="title-font-size-slider" gutterBottom>
-            Title font size: {titleFontSize}px
+            Title font size: {titleFontSize}rem
           </Typography>
           <Slider
-            defaultValue={18}
-            min={6}
-            max={120}
+            defaultValue={1.8}
+            min={0.4}
+            max={6.0}
+            step={0.1}
             onChange={handleTitleFontSizeChange}
             aria-labelledby="title-font-size-slider"
           />
         </FormControl>
         <FormControl sx={{ minWidth: 180 }}>
           <Typography id="body-font-size-slider" gutterBottom>
-            Body font size: {bodyFontSize}px
+            Body font size: {bodyFontSize}rem
           </Typography>
           <Slider
-            defaultValue={14}
-            min={6}
-            max={120}
+            defaultValue={1.0}
+            min={0.4}
+            max={6.0}
+            step={0.1}
             onChange={handleBodyFontSizeChange}
             aria-labelledby="body-font-size-slider"
           />
@@ -188,37 +181,46 @@ export default function TrackListGenerator({
           onChange={handleTextColorChange}
           label="Text"
         />
+        <FormControlLabel
+          control={<Checkbox onChange={handleIndexNumberChange} />}
+          label="Index number"
+        />
         <Box sx={{ flexGrow: 1 }} />
-        <FormControl margin="normal">
-          <Button type="button" onClick={handleSaveImage}>
-            <SaveIcon />
-          </Button>
-        </FormControl>
+
+        {/*  <Button type="button" onClick={draw}> */}
+        {/*     redraw */}
+        {/*   </Button> */}
+
+        <Button type="button" onClick={handleSaveImage} size="large">
+          <SaveIcon />
+        </Button>
       </Stack>
-      <Box id="track-list-box" sx={boxStyle}>
-        <Box>
-          <Typography variant="h4" sx={{ mb: 1, fontSize: titleFontSize }}>
-            {title}
-          </Typography>
-          {/* <ol style={{ paddingLeft: getListPadding() }}> */}
-          {tracks.map((track, index) => (
-            // <li
-            //   style={{ fontSize: bodyFontSize }}
-            //   key={index.toString() + track}
-            // >
-            <Typography
-              key={index.toString() + track}
-              variant="body1"
-              // component="span"
-              sx={{ fontSize: bodyFontSize }}
-            >
-              {track}
-            </Typography>
-            // </li>
-          ))}
-          {/* </ol> */}
-        </Box>
-      </Box>
+      <Frame
+        ref={iframeRef}
+        head={
+          <link
+            rel="stylesheet"
+            href={`${process.env.PUBLIC_URL}/iframe.css`}
+          />
+        }
+        // contentDidMount={handleMounted}
+        scrolling="no"
+        style={{ width: '512px', height: '512px', border: 'none' }}
+      >
+        <DrawArea
+          title={title}
+          titleFontSize={titleFontSize}
+          bodyFontSize={bodyFontSize}
+          textColor={textColor}
+          backgroundColor={backgroundColor}
+          backgroundOpacity={opacity}
+          backgroundImage={background}
+          tracks={tracks}
+          indexNumber={indexNumber}
+        />
+      </Frame>
+
+      {/* <div id="canvasPlaceholder" /> */}
 
       <Box width="800px">
         <FormControl fullWidth sx={{ my: 2 }}>
