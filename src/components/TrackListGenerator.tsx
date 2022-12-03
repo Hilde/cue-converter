@@ -181,28 +181,22 @@ export default function TrackListGenerator({
           onChange={handleTextColorChange}
           label="Text"
         />
-        <FormControl>
-          <FormControlLabel
-            control={
-              <Checkbox defaultChecked onChange={handleIndexNumberChange} />
-            }
-            label="Index number"
-            defaultChecked={indexNumber}
-          />
-        </FormControl>
+        <FormControlLabel
+          control={
+            <Checkbox defaultChecked onChange={handleIndexNumberChange} />
+          }
+          label="Index number"
+          defaultChecked={indexNumber}
+        />
         <Box sx={{ flexGrow: 1 }} />
 
-        {/* <FormControl margin="normal"> */}
         {/*  <Button type="button" onClick={draw}> */}
         {/*     redraw */}
         {/*   </Button> */}
-        {/* </FormControl> */}
 
-        <FormControl>
-          <Button type="button" onClick={handleSaveImage} size="large">
-            <SaveIcon />
-          </Button>
-        </FormControl>
+        <Button type="button" onClick={handleSaveImage} size="large">
+          <SaveIcon />
+        </Button>
       </Stack>
       <Frame
         ref={iframeRef}
