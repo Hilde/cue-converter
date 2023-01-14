@@ -4,16 +4,19 @@ import { CssBaseline } from '@mui/material';
 
 import Header from '../components/Header';
 import Copyright from '../components/Copyright';
-import SnackbarContextProvider from '../utils/snackbar/useSnackbar';
+import SnackbarContextProvider from '../hooks/snackbar/useSnackbar';
+import { ImageListContextProvider } from '../hooks/useImageList';
 
 export default function Layout() {
   return (
     <>
       <CssBaseline />
       <SnackbarContextProvider>
-        <Header />
-        <Outlet />
-        <Copyright />
+        <ImageListContextProvider>
+          <Header />
+          <Outlet />
+          <Copyright />
+        </ImageListContextProvider>
       </SnackbarContextProvider>
     </>
   );

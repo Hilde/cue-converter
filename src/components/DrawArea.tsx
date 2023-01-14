@@ -39,7 +39,7 @@ export default function DrawArea({
         className="background-area"
         style={{
           opacity: backgroundOpacity,
-          backgroundImage: `url(${backgroundImage})`,
+          backgroundImage: backgroundImage ? `url(${backgroundImage})` : '',
         }}
       />
       <Box className="list-area">

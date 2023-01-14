@@ -22,6 +22,27 @@ function fetchAsText(file: File): Promise<string> {
   });
 }
 
+function fetchAsDataURL(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+
+    fr.onload = () => {
+      const { result } = fr;
+      if (result) {
+        if (typeof result !== 'string') {
+          reject(new Error('FileReader did not return as string'));
+          return;
+        }
+        resolve(result);
+      } else {
+        reject(fr.error);
+      }
+    };
+
+    fr.readAsDataURL(file);
+  });
+}
+
 function escapeString(str: string): string {
   return str.replace('"', '\\"');
 }
@@ -39,4 +60,4 @@ function zeroFill(num: number): string {
 }
 
 export { INDENT, EOL };
-export { fetchAsText, escapeString, prependIndent, zeroFill };
+export { fetchAsText, fetchAsDataURL, escapeString, prependIndent, zeroFill };

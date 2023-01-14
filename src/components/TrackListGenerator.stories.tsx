@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 import TrackListGenerator, {
@@ -13,11 +13,27 @@ export default {
 
 type StoryTemplateType = ComponentStory<typeof StoryTemplate>;
 
-function StoryTemplate({ tracks, performer, title }: TrackListGeneratorProps) {
-  return <TrackListGenerator tracks={tracks} performer={performer} title={title} baseFileName="demo" />;
+function StoryTemplate({
+  tracks: initialTracks,
+  title: initialTitle,
+}: TrackListGeneratorProps) {
+  const [tracks, setTracks] = useState(initialTracks);
+  const [title, setTitle] = useState(initialTitle);
+
+  return (
+    <TrackListGenerator
+      tracks={tracks}
+      setTracks={setTracks}
+      title={title}
+      setTitle={setTitle}
+      baseFileName="demo"
+      open={() => {}}
+    />
+  );
 }
 
 export const Default = StoryTemplate.bind({}) as StoryTemplateType;
+// prettier-ignore
 const tracks = [
   'Kizuna AI (キズナアイ) & Moe Shop - RADIO LOVE HIGHWAY',
   'Moe Shop - Baby Pink (feat. YUC\'e)',
@@ -34,7 +50,6 @@ const tracks = [
   '大槻唯 (CV: 山下七海) - Radio Happy',
 ];
 Default.args = {
-  title: 'キラキラミックス',
-  performer: 'DJ Hildeko',
+  title: 'Glittering Girls Mix by DJ Hildeko',
   tracks,
 };

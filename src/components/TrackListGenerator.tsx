@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import {
   Box,
   FormControl,
@@ -9,6 +9,7 @@ import {
   Typography,
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
+import UploadIcon from '@mui/icons-material/Upload';
 import Frame from 'react-frame-component';
 import html2canvas from 'html2canvas';
 
@@ -18,29 +19,27 @@ import TextField from './TextField';
 import Button from './Button';
 import DrawArea from './DrawArea';
 import Checkbox from './Checkbox';
+import { useImageList } from '../hooks/useImageList';
+
+const getFirstValue = <T,>(val: T | T[]) => (Array.isArray(val) ? val[0] : val);
 
 export type TrackListGeneratorProps = {
-  performer: string;
   title: string;
+  setTitle: Dispatch<SetStateAction<string>>;
   tracks: Array<string>;
+  setTracks: Dispatch<SetStateAction<Array<string>>>;
   baseFileName: string;
+  open: Function;
 };
 
 export default function TrackListGenerator({
-  performer: performer_,
-  title: title_,
-  tracks: tracks_,
+  title,
+  setTitle,
+  tracks,
+  setTracks,
   baseFileName,
+  open,
 }: TrackListGeneratorProps) {
-  const getTitle = () => {
-    if (title_ && performer_) return `${title_} by ${performer_}`;
-    if (title_) return title_;
-    if (performer_) return `By ${performer_}`;
-    return '';
-  };
-
-  const [title, setTitle] = React.useState(getTitle());
-  const [tracks, setTracks] = React.useState(tracks_);
   const [background, setBackground] = React.useState('');
   const [opacity, setOpacity] = React.useState(0.7);
   const [backgroundColor, setBackgroundColor] = React.useState('#000000');
@@ -51,11 +50,17 @@ export default function TrackListGenerator({
 
   const iframeRef = React.useRef<any>(null);
 
-  const getFirstValue = <T,>(val: T | T[]) =>
-    Array.isArray(val) ? val[0] : val;
+  const imageList = useImageList();
 
   const handleBackgroundChange = (e: SelectChangeEvent) => {
-    setBackground(e.target.value);
+    // const url = getImageURL(e.target.value);
+    // setBackground(url);
+    const name = e.target.value;
+    for (let i = 0; i < imageList.length; i += 1) {
+      if (imageList[i].name === name) {
+        setBackground(imageList[i].url);
+      }
+    }
   };
 
   const handleOpacityChange = (e: Event, value: number | number[]) => {
@@ -128,9 +133,24 @@ export default function TrackListGenerator({
         Tracklist editor
       </Typography>
       <Stack direction="row" spacing={3} sx={{ mb: 1 }}>
-        <FormControl sx={{ minWidth: 180 }}>
+        <FormControl sx={{ width: 180 }}>
           <BGSelector onChange={handleBackgroundChange} />
         </FormControl>
+        <Button
+          variant="outlined"
+          startIcon={<UploadIcon />}
+          size="large"
+          onClick={() => {
+            open();
+          }}
+        >
+          Upload image
+        </Button>
+        <ColorPickerButton
+          defaultColor="#000"
+          onChange={handleBackgroundColorChange}
+          label="Background"
+        />
         <FormControl sx={{ minWidth: 180 }}>
           <Typography id="background-opacity-slider" gutterBottom>
             Background opacity
@@ -143,11 +163,6 @@ export default function TrackListGenerator({
             aria-labelledby="background-opacity-slider"
           />
         </FormControl>
-        <ColorPickerButton
-          defaultColor="#000"
-          onChange={handleBackgroundColorChange}
-          label="Background"
-        />
       </Stack>
       <Stack direction="row" spacing={3} sx={{ mb: 1 }}>
         <FormControl sx={{ minWidth: 180 }}>
@@ -191,8 +206,13 @@ export default function TrackListGenerator({
         {/*     redraw */}
         {/*   </Button> */}
 
-        <Button type="button" onClick={handleSaveImage} size="large">
-          <SaveIcon />
+        <Button
+          type="button"
+          onClick={handleSaveImage}
+          startIcon={<SaveIcon />}
+          size="large"
+        >
+          Save
         </Button>
       </Stack>
       <Frame

@@ -1,34 +1,24 @@
-import React from 'react';
+import React, { useState, ReactNode } from 'react';
 import { InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
+import { useImageList } from '../hooks/useImageList';
 
 export default function BGSelector({
   onChange,
 }: {
   onChange: (event: SelectChangeEvent) => void;
 }) {
-  const images = [
-    'starrysky1.png',
-    'starrysky2.png',
-    'starrysky3.png',
-    'starrysky4.png',
-    'sunsetsky1.png',
-    'sunsetsky2.png',
-    'sunsetsky3.png',
-    'sunsetsky4.png',
-    'sunsetsky5.png',
-    'sunsetsky6.png',
-  ];
-  const imageList: Array<React.ReactNode> = [];
-  images.forEach((img) => {
-    const url = `${process.env.PUBLIC_URL}/backgrounds/${img}`;
-    imageList.push(
-      <MenuItem value={url} key={img}>
-        {img}
+  const imageList = useImageList();
+
+  const imageItems: Array<ReactNode> = [];
+  const [image, setImage] = useState('');
+
+  imageList.forEach((img) => {
+    imageItems.push(
+      <MenuItem value={img.name} key={`${img.name}`}>
+        {img.name}
       </MenuItem>
     );
   });
-
-  const [image, setImage] = React.useState('');
 
   const handleChange = (e: SelectChangeEvent) => {
     setImage(e.target.value);
@@ -48,7 +38,7 @@ export default function BGSelector({
         value={image}
         onChange={handleChange}
       >
-        {imageList}
+        {imageItems}
       </Select>
     </>
   );
