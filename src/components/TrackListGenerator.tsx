@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import {
   Box,
   FormControl,
@@ -10,6 +10,10 @@ import {
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import UploadIcon from '@mui/icons-material/Upload';
+import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
+import FormatColorTextIcon from '@mui/icons-material/FormatColorText';
+import FormatSizeIcon from '@mui/icons-material/FormatSize';
+import OpacityIcon from '@mui/icons-material/Opacity';
 import Frame from 'react-frame-component';
 import html2canvas from 'html2canvas';
 
@@ -20,6 +24,8 @@ import Button from './Button';
 import DrawArea from './DrawArea';
 import Checkbox from './Checkbox';
 import { useImageList } from '../hooks/useImageList';
+import { useFontList } from '../hooks/useFontList';
+import FontSelector from './FontSelector';
 
 const getFirstValue = <T,>(val: T | T[]) => (Array.isArray(val) ? val[0] : val);
 
@@ -40,17 +46,20 @@ export default function TrackListGenerator({
   baseFileName,
   open,
 }: TrackListGeneratorProps) {
-  const [background, setBackground] = React.useState('');
-  const [opacity, setOpacity] = React.useState(0.7);
-  const [backgroundColor, setBackgroundColor] = React.useState('#000000');
-  const [textColor, setTextColor] = React.useState('#FFFFFF');
-  const [titleFontSize, setTitleFontSize] = React.useState(1.8);
-  const [bodyFontSize, setBodyFontSize] = React.useState(1.0);
-  const [indexNumber, setIndexNumber] = React.useState(false);
+  const imageList = useImageList();
+  const fontList = useFontList();
+
+  const [background, setBackground] = useState('');
+  const [opacity, setOpacity] = useState(0.7);
+  const [backgroundColor, setBackgroundColor] = useState('#000000');
+  const [textColor, setTextColor] = useState('#FFFFFF');
+  const [titleFontSize, setTitleFontSize] = useState(1.8);
+  const [titleFont, setTitleFont] = useState(fontList[0]);
+  const [bodyFontSize, setBodyFontSize] = useState(1.0);
+  const [bodyFont, setBodyFont] = useState(fontList[0]);
+  const [indexNumber, setIndexNumber] = useState(false);
 
   const iframeRef = React.useRef<any>(null);
-
-  const imageList = useImageList();
 
   const handleBackgroundChange = (e: SelectChangeEvent) => {
     // const url = getImageURL(e.target.value);
@@ -59,6 +68,24 @@ export default function TrackListGenerator({
     for (let i = 0; i < imageList.length; i += 1) {
       if (imageList[i].name === name) {
         setBackground(imageList[i].url);
+      }
+    }
+  };
+
+  const handleTitleFontChange = (e: SelectChangeEvent) => {
+    const name = e.target.value;
+    for (let i = 0; i < fontList.length; i += 1) {
+      if (fontList[i].name === name) {
+        setTitleFont(fontList[i]);
+      }
+    }
+  };
+
+  const handleBodyFontChange = (e: SelectChangeEvent) => {
+    const name = e.target.value;
+    for (let i = 0; i < fontList.length; i += 1) {
+      if (fontList[i].name === name) {
+        setBodyFont(fontList[i]);
       }
     }
   };
@@ -132,73 +159,92 @@ export default function TrackListGenerator({
       <Typography variant="h5" sx={{ mb: 2 }}>
         Tracklist editor
       </Typography>
-      <Stack direction="row" spacing={3} sx={{ mb: 1 }}>
-        <FormControl sx={{ width: 180 }}>
-          <BGSelector onChange={handleBackgroundChange} />
-        </FormControl>
-        <Button
-          variant="outlined"
-          startIcon={<UploadIcon />}
-          size="large"
-          onClick={() => {
-            open();
-          }}
-        >
-          Upload image
-        </Button>
-        <ColorPickerButton
-          defaultColor="#000"
-          onChange={handleBackgroundColorChange}
-          label="Background"
-        />
-        <FormControl sx={{ minWidth: 180 }}>
-          <Typography id="background-opacity-slider" gutterBottom>
-            Background opacity
-          </Typography>
-          <Slider
-            defaultValue={70}
-            min={0}
-            max={100}
-            onChange={handleOpacityChange}
-            aria-labelledby="background-opacity-slider"
+      <Stack direction="row" spacing={3} sx={{ mb: 2, alignItems: 'center' }}>
+        <Typography sx={{ width: '5.5rem' }}>Background</Typography>
+        <FormControl>
+          <ColorPickerButton
+            defaultColor="#000"
+            onChange={handleBackgroundColorChange}
+            startIcon={<FormatColorFillIcon />}
           />
+        </FormControl>
+        <FormControl sx={{ width: 180 }} size="small">
+          <BGSelector label="Image" onChange={handleBackgroundChange} />
+        </FormControl>
+        <FormControl sx={{ minWidth: 180 }}>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <OpacityIcon sx={{ opacity: 0.3 }} />
+            <Slider
+              defaultValue={70}
+              min={0}
+              max={100}
+              onChange={handleOpacityChange}
+              aria-labelledby="background-opacity-slider"
+            />
+            <OpacityIcon />
+          </Stack>
+        </FormControl>
+        <FormControl>
+          <Button
+            variant="outlined"
+            startIcon={<UploadIcon />}
+            onClick={() => {
+              open();
+            }}
+          >
+            Upload image
+          </Button>
         </FormControl>
       </Stack>
-      <Stack direction="row" spacing={3} sx={{ mb: 1 }}>
+
+      <Stack direction="row" spacing={3} sx={{ mb: 2, alignItems: 'center' }}>
+        <Typography sx={{ width: '5.5rem' }}>Title</Typography>
         <FormControl sx={{ minWidth: 180 }}>
-          <Typography id="title-font-size-slider" gutterBottom>
-            Title font size: {titleFontSize}rem
-          </Typography>
-          <Slider
-            defaultValue={1.8}
-            min={0.4}
-            max={6.0}
-            step={0.1}
-            onChange={handleTitleFontSizeChange}
-            aria-labelledby="title-font-size-slider"
-          />
+          <Stack direction="row" spacing={1} alignItems="center">
+            <FormatSizeIcon />
+            <Slider
+              defaultValue={1.8}
+              min={0.4}
+              max={6.0}
+              step={0.1}
+              onChange={handleTitleFontSizeChange}
+              aria-labelledby="title-font-size-slider"
+              valueLabelDisplay="auto"
+            />
+          </Stack>
         </FormControl>
+        <FormControl size="small" sx={{ width: 180 }}>
+          <FontSelector onChange={handleTitleFontChange} />
+        </FormControl>
+      </Stack>
+
+      <Stack direction="row" spacing={3} sx={{ mb: 2, alignItems: 'center' }}>
+        <Typography sx={{ width: '5.5rem' }}>Body</Typography>
         <FormControl sx={{ minWidth: 180 }}>
-          <Typography id="body-font-size-slider" gutterBottom>
-            Body font size: {bodyFontSize}rem
-          </Typography>
-          <Slider
-            defaultValue={1.0}
-            min={0.4}
-            max={6.0}
-            step={0.1}
-            onChange={handleBodyFontSizeChange}
-            aria-labelledby="body-font-size-slider"
-          />
+          <Stack direction="row" spacing={1} alignItems="center">
+            <FormatSizeIcon />
+            <Slider
+              defaultValue={1.0}
+              min={0.4}
+              max={6.0}
+              step={0.1}
+              onChange={handleBodyFontSizeChange}
+              aria-labelledby="body-font-size-slider"
+              valueLabelDisplay="auto"
+            />
+          </Stack>
+        </FormControl>
+        <FormControl size="small" sx={{ width: 180 }}>
+          <FontSelector onChange={handleBodyFontChange} />
         </FormControl>
         <ColorPickerButton
           defaultColor="#FFF"
           onChange={handleTextColorChange}
-          label="Text"
+          startIcon={<FormatColorTextIcon />}
         />
         <FormControlLabel
           control={<Checkbox onChange={handleIndexNumberChange} />}
-          label="Index number"
+          label="Show index"
         />
         <Box sx={{ flexGrow: 1 }} />
 
@@ -215,6 +261,7 @@ export default function TrackListGenerator({
           Save
         </Button>
       </Stack>
+
       <Frame
         ref={iframeRef}
         head={
@@ -230,7 +277,9 @@ export default function TrackListGenerator({
         <DrawArea
           title={title}
           titleFontSize={titleFontSize}
+          titleFont={titleFont}
           bodyFontSize={bodyFontSize}
+          bodyFont={bodyFont}
           textColor={textColor}
           backgroundColor={backgroundColor}
           backgroundOpacity={opacity}

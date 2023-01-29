@@ -2,6 +2,8 @@ import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 import AppMain from './AppMain';
+import { FontListContextProvider } from '../hooks/useFontList';
+import { ImageListContextProvider } from '../hooks/useImageList';
 
 export default {
   title: 'App/AppMain',
@@ -12,7 +14,13 @@ export default {
 type StoryTemplateType = ComponentStory<typeof StoryTemplate>;
 
 function StoryTemplate() {
-  return <AppMain />;
+  return (
+    <ImageListContextProvider>
+      <FontListContextProvider>
+        <AppMain />
+      </FontListContextProvider>
+    </ImageListContextProvider>
+  );
 }
 
 export const Default = StoryTemplate.bind({}) as StoryTemplateType;

@@ -4,6 +4,7 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 import TrackListGenerator, {
   TrackListGeneratorProps,
 } from './TrackListGenerator';
+import { FontListContextProvider } from '../hooks/useFontList';
 
 export default {
   title: 'Components/TrackListGenerator',
@@ -21,14 +22,16 @@ function StoryTemplate({
   const [title, setTitle] = useState(initialTitle);
 
   return (
-    <TrackListGenerator
-      tracks={tracks}
-      setTracks={setTracks}
-      title={title}
-      setTitle={setTitle}
-      baseFileName="demo"
-      open={() => {}}
-    />
+    <FontListContextProvider>
+      <TrackListGenerator
+        tracks={tracks}
+        setTracks={setTracks}
+        title={title}
+        setTitle={setTitle}
+        baseFileName="demo"
+        open={() => {}}
+      />
+    </FontListContextProvider>
   );
 }
 

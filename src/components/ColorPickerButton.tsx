@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { Box, Button } from '@mui/material';
 import { ColorResult, SketchPicker } from 'react-color';
 
 export type ColorPickerButtonProps = {
   label?: string;
+  startIcon?: ReactNode;
+  endIcon?: ReactNode;
   defaultColor: string;
   onChange?: (color: string) => void;
   onChangeComplete?: (color: string) => void;
@@ -12,6 +14,8 @@ export type ColorPickerButtonProps = {
 export default function ColorPickerButton(props: ColorPickerButtonProps) {
   const {
     label = '',
+    startIcon,
+    endIcon,
     defaultColor,
     onChange = () => {},
     onChangeComplete = () => {},
@@ -67,9 +71,11 @@ export default function ColorPickerButton(props: ColorPickerButtonProps) {
 
   return (
     <>
-      <Button onClick={handleClick} variant="outlined" size="large">
+      <Button onClick={handleClick} variant="outlined">
+        {startIcon}
         <div style={styles.swatch} />
         {label}
+        {endIcon}
       </Button>
       {isOpen ? (
         <Box sx={styles.popover}>

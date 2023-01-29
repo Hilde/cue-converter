@@ -1,24 +1,19 @@
-import React, { useState, ReactNode } from 'react';
+import React, { useState } from 'react';
 import { InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
-import { useImageList } from '../hooks/useImageList';
+import { ImageProps, useImageList } from '../hooks/useImageList';
 
 export default function BGSelector({
+  label,
+  defaultValue = '',
   onChange,
 }: {
+  label: string;
+  defaultValue?: string;
   onChange: (event: SelectChangeEvent) => void;
 }) {
   const imageList = useImageList();
 
-  const imageItems: Array<ReactNode> = [];
-  const [image, setImage] = useState('');
-
-  imageList.forEach((img) => {
-    imageItems.push(
-      <MenuItem value={img.name} key={`${img.name}`}>
-        {img.name}
-      </MenuItem>
-    );
-  });
+  const [image, setImage] = useState(defaultValue);
 
   const handleChange = (e: SelectChangeEvent) => {
     setImage(e.target.value);
@@ -27,18 +22,19 @@ export default function BGSelector({
 
   return (
     <>
-      <InputLabel id="background-image-select-label">
-        Background image
-      </InputLabel>
+      <InputLabel id="background-image-select-label">{label}</InputLabel>
       <Select
         labelId="background-image-select-label"
         id="background-image"
-        label="Background image"
-        defaultValue=""
+        label={label}
         value={image}
         onChange={handleChange}
       >
-        {imageItems}
+        {imageList.map((img: ImageProps) => (
+          <MenuItem value={img.name} key={`${img.name}`}>
+            {img.name}
+          </MenuItem>
+        ))}
       </Select>
     </>
   );

@@ -16,7 +16,7 @@ function StoryTemplate({ onChange }: { onChange: () => void }) {
   return (
     <Box sx={{ maxWidth: 150 }}>
       <FormControl fullWidth>
-        <BGSelector onChange={onChange} />
+        <BGSelector onChange={onChange} label="Story" />
       </FormControl>
     </Box>
   );

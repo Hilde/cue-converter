@@ -127,7 +127,7 @@ export default function AppMain() {
 
   return (
     <StyledDropZone getRootProps={getRootProps} isDragActive={isDragActive}>
-      <Container component="main" maxWidth="md" sx={{ mb: 4 }}>
+      <Container component="main" maxWidth="lg" sx={{ mb: 4 }}>
         <Paper>
           <p>
             rekordboxが出力するcueファイルを、Mixcloudでタイムスタンプが反映されるように変換します。ファイルの内容はブラウザ内で変換され、サーバ側には送信しません。

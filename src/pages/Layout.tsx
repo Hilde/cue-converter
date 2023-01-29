@@ -6,6 +6,7 @@ import Header from '../components/Header';
 import Copyright from '../components/Copyright';
 import SnackbarContextProvider from '../hooks/snackbar/useSnackbar';
 import { ImageListContextProvider } from '../hooks/useImageList';
+import { FontListContextProvider } from '../hooks/useFontList';
 
 export default function Layout() {
   return (
@@ -13,9 +14,11 @@ export default function Layout() {
       <CssBaseline />
       <SnackbarContextProvider>
         <ImageListContextProvider>
-          <Header />
-          <Outlet />
-          <Copyright />
+          <FontListContextProvider>
+            <Header />
+            <Outlet />
+            <Copyright />
+          </FontListContextProvider>
         </ImageListContextProvider>
       </SnackbarContextProvider>
     </>

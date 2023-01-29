@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Container } from '@mui/material';
 import { FileRejection, useDropzone } from 'react-dropzone';
 
@@ -11,6 +11,9 @@ import { fetchAsDataURL } from '../cue/Utils';
 
 export default function Editor() {
   const { showSnackbar } = useSnackbar();
+
+  const [tracks, setTracks] = useState<Array<string>>([]);
+  const [title, setTitle] = useState('');
 
   const setImageList = useSetImageList();
 
@@ -70,13 +73,13 @@ export default function Editor() {
 
   return (
     <StyledDropZone getRootProps={getRootProps} isDragActive={isDragActive}>
-      <Container component="main" maxWidth="md" sx={{ mb: 4 }}>
+      <Container component="main" maxWidth="lg" sx={{ mb: 4 }}>
         <Paper>
           <TrackListGenerator
-            title=""
-            setTitle={() => {}}
-            tracks={[]}
-            setTracks={() => {}}
+            title={title}
+            setTitle={setTitle}
+            tracks={tracks}
+            setTracks={setTracks}
             baseFileName="tracklist"
             open={open}
           />

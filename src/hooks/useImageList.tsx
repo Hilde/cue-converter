@@ -13,7 +13,7 @@ export type ImageProps = {
   url: string;
 };
 
-const NO_IMAGE = 'No Image';
+export const NO_IMAGE = 'No Image';
 
 const defaultImages = [
   NO_IMAGE,
